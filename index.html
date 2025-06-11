@@ -888,16 +888,19 @@
                     const successMessage = document.getElementById('successMessage');
                     successMessage.style.display = 'block';
                     
-                    // Recargar clasificados
+                    // Recargar clasificados inmediatamente
                     try {
                         if (typeof window.cargarClasificados === 'function') {
+                            console.log("🔄 Recargando clasificados desde Firebase...");
                             const nuevosClasificados = await window.cargarClasificados();
                             window.anuncios = nuevosClasificados;
+                            console.log("✅ Clasificados actualizados:", nuevosClasificados.length);
                         }
                     } catch (loadError) {
                         console.log("⚠️ Error recargando, usando datos actuales");
                     }
                     
+                    // Actualizar la vista inmediatamente
                     actualizarAnunciosRecientes();
                     
                     // Limpiar formulario
@@ -1060,8 +1063,9 @@
                 
                 // Reemplazar datos locales con datos de Firebase
                 window.anuncios = clasificadosFirebase;
+                console.log("📊 Cargados", clasificadosFirebase.length, "clasificados desde Firebase");
                 
-                // Actualizar la vista
+                // Actualizar la vista inmediatamente
                 if (typeof actualizarAnunciosRecientes === 'function') {
                     actualizarAnunciosRecientes();
                 }
@@ -1072,6 +1076,24 @@
                 console.log("📝 Continuando con datos locales");
             }
         });
+
+        // Auto-actualización cada 10 segundos para mantener datos sincronizados
+        setInterval(async function() {
+            if (db && typeof window.cargarClasificados === 'function') {
+                try {
+                    const nuevosClasificados = await window.cargarClasificados();
+                    const cantidadAnterior = window.anuncios ? window.anuncios.length : 0;
+                    
+                    if (nuevosClasificados.length !== cantidadAnterior) {
+                        console.log("🔄 Nuevos clasificados detectados, actualizando...");
+                        window.anuncios = nuevosClasificados;
+                        actualizarAnunciosRecientes();
+                    }
+                } catch (error) {
+                    // Silencioso para no llenar la consola
+                }
+            }
+        }, 10000); // Cada 10 segundos
     </script>
 </body>
 </html>
