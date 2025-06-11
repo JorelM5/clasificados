@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏪 Clasificados DChaleco Online</title>
+    <title>🏪 Clasificados Online</title>
     <style>
         * {
             margin: 0;
@@ -725,10 +725,30 @@
 
         // Función para mostrar anuncios recientes
         function actualizarAnunciosRecientes() {
+            console.log("🔄 Actualizando vista de anuncios...");
             const container = document.getElementById('anunciosContainer');
-            const anunciosActivos = anuncios.filter(anuncio => anuncio.activo)
-                                            .sort((a, b) => b.fechaCreacion - a.fechaCreacion)
-                                            .slice(0, 12);
+            
+            if (!container) {
+                console.error("❌ Container no encontrado");
+                return;
+            }
+            
+            if (!window.anuncios || !Array.isArray(window.anuncios)) {
+                console.log("⚠️ No hay anuncios en memoria");
+                container.innerHTML = '<div class="no-ads">No hay anuncios disponibles en este momento.</div>';
+                return;
+            }
+
+            const anunciosActivos = window.anuncios.filter(anuncio => anuncio && anuncio.activo)
+                                                  .sort((a, b) => {
+                                                      // Ordenar por fecha de creación (más recientes primero)
+                                                      const fechaA = a.fechaCreacion instanceof Date ? a.fechaCreacion : new Date(a.fechaCreacion);
+                                                      const fechaB = b.fechaCreacion instanceof Date ? b.fechaCreacion : new Date(b.fechaCreacion);
+                                                      return fechaB - fechaA;
+                                                  })
+                                                  .slice(0, 12);
+
+            console.log("📊 Mostrando", anunciosActivos.length, "anuncios activos");
 
             if (anunciosActivos.length === 0) {
                 container.innerHTML = '<div class="no-ads">No hay anuncios disponibles en este momento.</div>';
@@ -736,26 +756,43 @@
             }
 
             container.innerHTML = anunciosActivos.map(anuncio => {
-                const estado = obtenerEstadoAnuncio(anuncio.fechaExpiracion);
+                // Manejar fechas de forma segura
+                let fechaExpiracion;
+                try {
+                    fechaExpiracion = anuncio.fechaExpiracion instanceof Date ? 
+                        anuncio.fechaExpiracion : new Date(anuncio.fechaExpiracion);
+                } catch (e) {
+                    fechaExpiracion = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 días por defecto
+                }
+                
+                let fechaCreacion;
+                try {
+                    fechaCreacion = anuncio.fechaCreacion instanceof Date ? 
+                        anuncio.fechaCreacion : new Date(anuncio.fechaCreacion);
+                } catch (e) {
+                    fechaCreacion = new Date(); // Hoy por defecto
+                }
+
+                const estado = obtenerEstadoAnuncio(fechaExpiracion);
                 const telefono = anuncio.telefono ? ` | Tel: ${anuncio.telefono}` : '';
                 
                 return `
                     <div class="ad-item">
                         <div class="ad-header">
                             <div>
-                                <div class="ad-title">${anuncio.nombre}</div>
-                                <span class="ad-category">${anuncio.categoria}</span>
+                                <div class="ad-title">${anuncio.nombre || 'Sin nombre'}</div>
+                                <span class="ad-category">${anuncio.categoria || 'general'}</span>
                             </div>
                             <span class="status-badge ${estado.clase}">${estado.texto}</span>
                         </div>
-                        <div class="ad-description">${anuncio.descripcion}</div>
+                        <div class="ad-description">${anuncio.descripcion || 'Sin descripción'}</div>
                         <div class="ad-footer">
-                            <div class="ad-contact">📧 ${anuncio.email}${telefono}</div>
-                            <div class="ad-date">📅 ${anuncio.fechaCreacion.toLocaleDateString()}</div>
+                            <div class="ad-contact">📧 ${anuncio.email || 'Sin email'}${telefono}</div>
+                            <div class="ad-date">📅 ${fechaCreacion.toLocaleDateString()}</div>
                         </div>
                         <div class="ad-actions">
-                            <button class="edit-btn" onclick="editarAnuncio(${anuncio.id})">✏️ Editar</button>
-                            <button class="delete-btn" onclick="eliminarAnuncio(${anuncio.id})">🗑️ Eliminar</button>
+                            <button class="edit-btn" onclick="editarAnuncio('${anuncio.id}')">✏️ Editar</button>
+                            <button class="delete-btn" onclick="eliminarAnuncio('${anuncio.id}')">🗑️ Eliminar</button>
                         </div>
                     </div>
                 `;
@@ -763,6 +800,7 @@
 
             // Actualizar contadores
             actualizarContadores();
+            console.log("✅ Vista actualizada correctamente");
         }
 
         // Función para editar anuncio
