@@ -1,46 +1,4 @@
-        // Función para verificar anuncios que van a expirar
-        function verificarExpiraciones() {
-            anuncios.forEach(anuncio => {
-                const diasRestantes = calcularDiasRestantes(anuncio.fechaExpiracion);
-                
-                // Notificar si faltan 5 días o menos
-                if (diasRestantes === 5) {
-                    console.log(`📧 Enviando recordatorio de expiración a ${anuncio.email}`);
-                    // Aquí enviarías el email de recordatorio
-                }
-                
-                // Marcar como expirado si ya pasó la fecha
-                if (diasRestantes <= 0) {
-                    anuncio.activo = false;
-                }
-            });
-        }
-
-        // Inicializar la página
-        window.addEventListener('load', function() {
-            // Verificar expiraciones al cargar
-            verificarExpiraciones();
-            
-            // Actualizar anuncios al cargar
-            actualizarAnunciosRecientes();
-            
-            // Agregar animaciones al cargar la página
-            const elements = document.querySelectorAll('.category-card, .ad-item');
-            elements.forEach((element, index) => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    element.style.transition = 'all 0.6s ease';
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-            
-            // Verificar expiraciones cada hora
-            setInterval(verificarExpiraciones, 60 * 60 * 1000);
-        });
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -495,78 +453,45 @@
         // Array para almacenar los anuncios
         let anuncios = [
             {
+                id: 1,
                 nombre: "María González",
                 email: "maria@email.com",
                 categoria: "electronica",
-                descripcion: "Vendo iPhone 14 Pro Max de 256GB en excelente estado, apenas 6 meses de uso..."
+                descripcion: "Vendo iPhone 14 Pro Max de 256GB en excelente estado, apenas 6 meses de uso...",
+                fechaCreacion: new Date(),
+                fechaExpiracion: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+                activo: true
             },
             {
+                id: 2,
                 nombre: "Carlos Ruiz",
                 email: "carlos@email.com",
                 categoria: "inmuebles",
-                descripcion: "Se arrienda hermoso apartamento en el centro de la ciudad, 2 habitaciones..."
+                descripcion: "Se arrienda hermoso apartamento en el centro de la ciudad, 2 habitaciones...",
+                fechaCreacion: new Date(),
+                fechaExpiracion: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+                activo: true
             },
             {
+                id: 3,
                 nombre: "Ana Torres",
                 email: "ana@email.com",
                 categoria: "vehiculos",
-                descripcion: "Vendo Honda Civic 2020, único dueño, todos los servicios al día..."
+                descripcion: "Vendo Honda Civic 2020, único dueño, todos los servicios al día...",
+                fechaCreacion: new Date(),
+                fechaExpiracion: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
+                activo: true
             }
         ];
 
         // Función para enviar email de notificación (simulado)
         async function enviarNotificacionEmail(anuncio) {
-            // Simular envío de email
             console.log("📧 Enviando notificación por email...");
-            
-            const emailData = {
-                to: EMAIL_CONFIG.adminEmail,
-                subject: "🆕 Nuevo Clasificado Publicado",
-                body: `
-                    Nuevo clasificado recibido:
-                    
-                    👤 Nombre: ${anuncio.nombre}
-                    📧 Email: ${anuncio.email}
-                    📞 Teléfono: ${anuncio.telefono || 'No proporcionado'}
-                    📂 Categoría: ${anuncio.categoria}
-                    📝 Descripción: ${anuncio.descripcion}
-                    📅 Fecha: ${anuncio.fechaCreacion.toLocaleDateString()}
-                    ⏰ Expira: ${anuncio.fechaExpiracion.toLocaleDateString()}
-                `
-            };
-            
-            // Aquí implementarías el servicio real de email
-            // Opciones populares:
-            // 1. EmailJS (frontend)
-            // 2. Formspree 
-            // 3. Netlify Forms
-            // 4. Backend con Nodemailer
             
             try {
                 // Simulación de envío exitoso
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 console.log("✅ Email enviado exitosamente");
-                
-                // También enviar confirmación al usuario
-                const confirmacionUsuario = {
-                    to: anuncio.email,
-                    subject: "✅ Tu clasificado ha sido publicado",
-                    body: `
-                        Hola ${anuncio.nombre},
-                        
-                        Tu clasificado ha sido publicado exitosamente:
-                        
-                        📂 Categoría: ${anuncio.categoria}
-                        📝 Descripción: ${anuncio.descripcion.substring(0, 100)}...
-                        📅 Fecha de publicación: ${anuncio.fechaCreacion.toLocaleDateString()}
-                        📅 Fecha de expiración: ${anuncio.fechaExpiracion.toLocaleDateString()}
-                        
-                        Te enviaremos un recordatorio 5 días antes de que expire.
-                        
-                        Gracias por usar nuestro servicio de clasificados.
-                    `
-                };
-                
                 return true;
             } catch (error) {
                 console.error("❌ Error enviando email:", error);
@@ -600,7 +525,6 @@
             if (!anuncio) return;
             
             const editForm = document.getElementById(`edit-form-${id}`);
-            const adItem = document.getElementById(`ad-${id}`);
             
             if (editForm.style.display === 'none' || !editForm.style.display) {
                 editForm.style.display = 'block';
@@ -729,7 +653,7 @@
             // Filtrar anuncios activos y mostrar los más recientes
             const anunciosActivos = anuncios.filter(anuncio => {
                 const diasRestantes = calcularDiasRestantes(anuncio.fechaExpiracion);
-                return diasRestantes > 0; // Solo mostrar anuncios no expirados
+                return diasRestantes > 0;
             });
             
             anunciosActivos.slice(0, 5).forEach(anuncio => {
@@ -737,7 +661,6 @@
                 adItem.className = 'ad-item';
                 adItem.id = `ad-${anuncio.id}`;
                 
-                // Extraer título de la descripción (primeras palabras)
                 const titulo = anuncio.descripcion.substring(0, 50) + '...';
                 const estado = obtenerEstadoAnuncio(anuncio);
                 
@@ -760,7 +683,6 @@
                 recentAdsSection.appendChild(adItem);
             });
             
-            // Mostrar mensaje si no hay anuncios
             if (anunciosActivos.length === 0) {
                 const noAdsMessage = document.createElement('div');
                 noAdsMessage.className = 'ad-item';
@@ -772,8 +694,32 @@
             }
         }
 
-        // Agregar animaciones al cargar la página
+        // Función para verificar anuncios que van a expirar
+        function verificarExpiraciones() {
+            anuncios.forEach(anuncio => {
+                const diasRestantes = calcularDiasRestantes(anuncio.fechaExpiracion);
+                
+                // Notificar si faltan 5 días o menos
+                if (diasRestantes === 5) {
+                    console.log(`📧 Enviando recordatorio de expiración a ${anuncio.email}`);
+                }
+                
+                // Marcar como expirado si ya pasó la fecha
+                if (diasRestantes <= 0) {
+                    anuncio.activo = false;
+                }
+            });
+        }
+
+        // Inicializar la página
         window.addEventListener('load', function() {
+            // Verificar expiraciones al cargar
+            verificarExpiraciones();
+            
+            // Actualizar anuncios al cargar
+            actualizarAnunciosRecientes();
+            
+            // Agregar animaciones al cargar la página
             const elements = document.querySelectorAll('.category-card, .ad-item');
             elements.forEach((element, index) => {
                 element.style.opacity = '0';
@@ -785,6 +731,9 @@
                     element.style.transform = 'translateY(0)';
                 }, index * 100);
             });
+            
+            // Verificar expiraciones cada hora
+            setInterval(verificarExpiraciones, 60 * 60 * 1000);
         });
     </script>
 </body>
