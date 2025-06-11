@@ -1,4 +1,5 @@
- <!DOCTYPE html>
+
+            <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -613,49 +614,109 @@
         document.getElementById('clasificadoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const nuevoId = anuncios.length > 0 ? Math.max(...anuncios.map(a => a.id)) + 1 : 1;
-            const fechaCreacion = new Date();
-            const fechaExpiracion = new Date(fechaCreacion.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días
+            // Mostrar loading
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ Publicando...';
+            submitBtn.disabled = true;
             
-            const formData = {
-                id: nuevoId,
-                nombre: document.getElementById('nombre').value,
-                email: document.getElementById('email').value,
-                telefono: document.getElementById('telefono').value,
-                categoria: document.getElementById('categoria').value,
-                descripcion: document.getElementById('descripcion').value,
-                fechaCreacion: fechaCreacion,
-                fechaExpiracion: fechaExpiracion,
-                activo: true
-            };
-            
-            // Agregar el nuevo anuncio al array
-            anuncios.unshift(formData);
-            
-            // Enviar notificación por email
-            const emailEnviado = await enviarNotificacionEmail(formData);
-            
-            // Mostrar mensaje de éxito
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            
-            // Actualizar la lista de anuncios recientes
-            actualizarAnunciosRecientes();
-            
-            // Limpiar el formulario
-            this.reset();
-            
-            // Ocultar mensaje de éxito después de 5 segundos
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 5000);
-            
-            // Scroll suave a los anuncios recientes
-            setTimeout(() => {
-                document.querySelector('.recent-ads').scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }, 1000);
+            try {
+                const formData = {
+                    nombre: document.getElementById('nombre').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    telefono: document.getElementById('telefono').value.trim() || '',
+                    categoria: document.getElementById('categoria').value,
+                    descripcion: document.getElementById('descripcion').value.trim()
+                };
+                
+                console.log("📤 Enviando clasificado...", formData);
+                
+                // Intentar guardar en Firebase primero
+                let id = null;
+                try {
+                    if (typeof window.guardarClasificado === 'function') {
+                        id = await window.guardarClasificado(formData);
+                        console.log("✅ Guardado en Firebase con ID:", id);
+                    } else {
+                        const firebaseConfig = {
+  apiKey: "AIzaSyAy4pQUJjWe-jYYToxqxfIoOJBgvS4aWwg",
+  authDomain: "clasificados-606d5.firebaseapp.com",
+  projectId: "clasificados-606d5",
+  storageBucket: "clasificados-606d5.firebasestorage.app",
+  messagingSenderId: "809246084580",
+  appId: "1:809246084580:web:373891ac187c118d2c4bf1",
+  measurementId: "G-P6BPEPPS0E"
+};;
+                        
+                        anuncios.unshift(anuncioCompleto);
+                        id = nuevoId;
+                    }
+                } catch (firebaseError) {
+                    console.error("❌ Error con Firebase, usando respaldo local:", firebaseError);
+                    // Fallback local
+                    const nuevoId = anuncios.length > 0 ? Math.max(...anuncios.map(a => a.id || 0)) + 1 : 1;
+                    const fechaCreacion = new Date();
+                    const fechaExpiracion = new Date(fechaCreacion.getTime() + 30 * 24 * 60 * 60 * 1000);
+                    
+                    const anuncioCompleto = {
+                        id: nuevoId,
+                        ...formData,
+                        fechaCreacion: fechaCreacion,
+                        fechaExpiracion: fechaExpiracion,
+                        activo: true
+                    };
+                    
+                    anuncios.unshift(anuncioCompleto);
+                    id = nuevoId;
+                }
+                
+                if (id) {
+                    // Enviar email si está configurado
+                    try {
+                        await enviarNotificacionEmail({...formData, id});
+                    } catch (emailError) {
+                        console.log("⚠️ Email no enviado, pero clasificado guardado");
+                    }
+                    
+                    // Mostrar mensaje de éxito
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.style.display = 'block';
+                    
+                    // Recargar clasificados
+                    try {
+                        if (typeof window.cargarClasificados === 'function') {
+                            const nuevosClasificados = await window.cargarClasificados();
+                            window.anuncios = nuevosClasificados;
+                        }
+                    } catch (loadError) {
+                        console.log("⚠️ Error recargando, usando datos actuales");
+                    }
+                    
+                    actualizarAnunciosRecientes();
+                    
+                    // Limpiar formulario
+                    this.reset();
+                    
+                    // Scroll suave a los anuncios
+                    setTimeout(() => {
+                        document.querySelector('.recent-ads').scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }, 1000);
+                    
+                    // Ocultar mensaje después de 5 segundos
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error("❌ Error general:", error);
+                alert('❌ Error al publicar el clasificado. Inténtalo de nuevo.');
+            } finally {
+                // Restaurar botón
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
         });
 
         // Función para actualizar la lista de anuncios recientes
@@ -745,108 +806,5 @@
             });
         });
     </script>
-Todo
-<!-- Firebase v9 SDK -->
-<script type="module">
-// Import Firebase
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    query, 
-    where, 
-    orderBy, 
-    limit,
-    Timestamp 
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-
-// 🔥 REEMPLAZA ESTA CONFIGURACIÓN CON LA TUYA
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto-id",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "tu-app-id"
-};
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// 🔥 FUNCIONES PARA MANEJAR CLASIFICADOS
-
-// Guardar nuevo clasificado
-window.guardarClasificado = async function(datos) {
-    try {
-        const docRef = await addDoc(collection(db, "clasificados"), {
-            ...datos,
-            fechaCreacion: Timestamp.fromDate(new Date()),
-            fechaExpiracion: Timestamp.fromDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
-            activo: true
-        });
-        console.log("✅ Clasificado guardado con ID: ", docRef.id);
-        return docRef.id;
-    } catch (error) {
-        console.error("❌ Error guardando clasificado: ", error);
-        throw error;
-    }
-};
-
-// Cargar clasificados desde Firebase
-window.cargarClasificados = async function() {
-    try {
-        const q = query(
-            collection(db, "clasificados"),
-            where("activo", "==", true),
-            orderBy("fechaCreacion", "desc"),
-            limit(20)
-        );
-        
-        const querySnapshot = await getDocs(q);
-        const clasificados = [];
-        
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            clasificados.push({
-                id: doc.id,
-                ...data,
-                fechaCreacion: data.fechaCreacion.toDate(),
-                fechaExpiracion: data.fechaExpiracion.toDate()
-            });
-        });
-        
-        console.log("📊 Cargados", clasificados.length, "clasificados desde Firebase");
-        return clasificados;
-    } catch (error) {
-        console.error("❌ Error cargando clasificados: ", error);
-        return [];
-    }
-};
-
-// Inicializar cuando la página carga
-window.addEventListener('load', async function() {
-    try {
-        console.log("🔥 Conectando con Firebase...");
-        const clasificadosFirebase = await cargarClasificados();
-        
-        // Reemplazar el array local con datos de Firebase
-        if (typeof window.anuncios !== 'undefined') {
-            window.anuncios = clasificadosFirebase;
-            if (typeof actualizarAnunciosRecientes === 'function') {
-                actualizarAnunciosRecientes();
-            }
-        }
-        
-        console.log("✅ Firebase conectado exitosamente");
-    } catch (error) {
-        console.error("❌ Error conectando Firebase:", error);
-        console.log("📝 Usando datos locales como respaldo");
-    }
-});
-
-</script>
 </body>
 </html>
