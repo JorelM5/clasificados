@@ -745,5 +745,108 @@
             });
         });
     </script>
+Todo
+<!-- Firebase v9 SDK -->
+<script type="module">
+// Import Firebase
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    getDocs, 
+    query, 
+    where, 
+    orderBy, 
+    limit,
+    Timestamp 
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+// 🔥 REEMPLAZA ESTA CONFIGURACIÓN CON LA TUYA
+const firebaseConfig = {
+  apiKey: "TU_API_KEY",
+  authDomain: "tu-proyecto.firebaseapp.com",
+  projectId: "tu-proyecto-id",
+  storageBucket: "tu-proyecto.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "tu-app-id"
+};
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔥 FUNCIONES PARA MANEJAR CLASIFICADOS
+
+// Guardar nuevo clasificado
+window.guardarClasificado = async function(datos) {
+    try {
+        const docRef = await addDoc(collection(db, "clasificados"), {
+            ...datos,
+            fechaCreacion: Timestamp.fromDate(new Date()),
+            fechaExpiracion: Timestamp.fromDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
+            activo: true
+        });
+        console.log("✅ Clasificado guardado con ID: ", docRef.id);
+        return docRef.id;
+    } catch (error) {
+        console.error("❌ Error guardando clasificado: ", error);
+        throw error;
+    }
+};
+
+// Cargar clasificados desde Firebase
+window.cargarClasificados = async function() {
+    try {
+        const q = query(
+            collection(db, "clasificados"),
+            where("activo", "==", true),
+            orderBy("fechaCreacion", "desc"),
+            limit(20)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const clasificados = [];
+        
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            clasificados.push({
+                id: doc.id,
+                ...data,
+                fechaCreacion: data.fechaCreacion.toDate(),
+                fechaExpiracion: data.fechaExpiracion.toDate()
+            });
+        });
+        
+        console.log("📊 Cargados", clasificados.length, "clasificados desde Firebase");
+        return clasificados;
+    } catch (error) {
+        console.error("❌ Error cargando clasificados: ", error);
+        return [];
+    }
+};
+
+// Inicializar cuando la página carga
+window.addEventListener('load', async function() {
+    try {
+        console.log("🔥 Conectando con Firebase...");
+        const clasificadosFirebase = await cargarClasificados();
+        
+        // Reemplazar el array local con datos de Firebase
+        if (typeof window.anuncios !== 'undefined') {
+            window.anuncios = clasificadosFirebase;
+            if (typeof actualizarAnunciosRecientes === 'function') {
+                actualizarAnunciosRecientes();
+            }
+        }
+        
+        console.log("✅ Firebase conectado exitosamente");
+    } catch (error) {
+        console.error("❌ Error conectando Firebase:", error);
+        console.log("📝 Usando datos locales como respaldo");
+    }
+});
+
+</script>
 </body>
 </html>
