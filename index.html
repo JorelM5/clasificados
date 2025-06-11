@@ -1,75 +1,749 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Clasificados</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificados Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .main-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .categories-section, .form-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .categories-section:hover, .form-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .category-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .category-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .category-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .category-count {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .recent-ads {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .ad-item {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .ad-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .ad-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .ad-category {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .ad-preview {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .main-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+
+        .duracion-info {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .duracion-info p {
+            margin-bottom: 5px;
+            color: #0c5460;
+        }
+
+        .duracion-info small {
+            color: #6c757d;
+        }
+
+        .ad-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .ad-status {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        .status-active {
+            color: #28a745;
+        }
+
+        .status-expiring {
+            color: #ffc107;
+        }
+
+        .status-expired {
+            color: #dc3545;
+        }
+
+        .edit-form {
+            display: none;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .email-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .email-info h4 {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Publicar Clasificado</h1>
-  <form id="form-clasificado">
-    <input type="text" id="nombre" placeholder="Tu nombre" required>
-    <textarea id="mensaje" placeholder="Escribe tu anuncio" required></textarea>
-    <button type="submit">Publicar</button>
-  </form>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 Clasificados Online</h1>
+            <p>Encuentra lo que buscas o vende lo que ya no necesitas</p>
+        </div>
 
-  <h2>Clasificados Publicados</h2>
-  <ul id="lista-clasificados"></ul>
+        <div class="main-section">
+            <div class="categories-section">
+                <h2 class="section-title">📂 Categorías</h2>
+                <div class="categories-grid">
+                    <a href="#" class="category-card" onclick="selectCategory('vehiculos')">
+                        <span class="category-icon">🚗</span>
+                        <div class="category-name">Vehículos</div>
+                        <div class="category-count">24 anuncios</div>
+                    </a>
+                    <a href="#" class="category-card" onclick="selectCategory('inmuebles')">
+                        <span class="category-icon">🏠</span>
+                        <div class="category-name">Inmuebles</div>
+                        <div class="category-count">18 anuncios</div>
+                    </a>
+                    <a href="#" class="category-card" onclick="selectCategory('electronica')">
+                        <span class="category-icon">📱</span>
+                        <div class="category-name">Electrónicos</div>
+                        <div class="category-count">31 anuncios</div>
+                    </a>
+                    <a href="#" class="category-card" onclick="selectCategory('muebles')">
+                        <span class="category-icon">🛋️</span>
+                        <div class="category-name">Muebles</div>
+                        <div class="category-count">15 anuncios</div>
+                    </a>
+                    <a href="#" class="category-card" onclick="selectCategory('ropa')">
+                        <span class="category-icon">👕</span>
+                        <div class="category-name">Ropa</div>
+                        <div class="category-count">42 anuncios</div>
+                    </a>
+                    <a href="#" class="category-card" onclick="selectCategory('servicios')">
+                        <span class="category-icon">🔧</span>
+                        <div class="category-name">Servicios</div>
+                        <div class="category-count">29 anuncios</div>
+                    </a>
+                </div>
+            </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+            <div class="form-section">
+                <h2 class="section-title">📝 Publicar Anuncio</h2>
+                
+                <div class="email-info">
+                    <h4>📧 Notificaciones por Email</h4>
+                    <p>• Recibirás confirmación cuando publiques tu anuncio</p>
+                    <p>• Te notificaremos 5 días antes de que expire</p>
+                    <p>• Podrás renovar o editar tu anuncio desde el email</p>
+                </div>
 
-    // ⚠️ Pega aquí tu configuración de Firebase:
-    const firebaseConfig = {
-  apiKey: "AIzaSyAy4pQUJjWe-jYYToxqxfIoOJBgvS4aWwg",
-  authDomain: "clasificados-606d5.firebaseapp.com",
-  projectId: "clasificados-606d5",
-  storageBucket: "clasificados-606d5.firebasestorage.app",
-  messagingSenderId: "809246084580",
-  appId: "1:809246084580:web:373891ac187c118d2c4bf1",
-  measurementId: "G-P6BPEPPS0E"
-};
+                <div class="success-message" id="successMessage">
+                    ¡Tu anuncio ha sido enviado exitosamente! Se ha enviado una notificación por email.
+                </div>
+                <form id="clasificadoForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo *</label>
+                        <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
+                    </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+                    <div class="form-group">
+                        <label for="email">Correo electrónico *</label>
+                        <input type="email" id="email" name="email" required placeholder="tu@email.com">
+                    </div>
 
-    async function guardarClasificado(data) {
-      try {
-        await addDoc(collection(db, "clasificados"), {
-          ...data,
-          fecha: Timestamp.now()
+                    <div class="form-group">
+                        <label for="categoria">Categoría *</label>
+                        <select id="categoria" name="categoria" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="vehiculos">🚗 Vehículos</option>
+                            <option value="inmuebles">🏠 Inmuebles</option>
+                            <option value="electronica">📱 Electrónicos</option>
+                            <option value="muebles">🛋️ Muebles</option>
+                            <option value="ropa">👕 Ropa</option>
+                            <option value="servicios">🔧 Servicios</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion">Descripción del anuncio *</label>
+                        <textarea id="descripcion" name="descripcion" required placeholder="Describe tu producto o servicio en detalle..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono de contacto</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="Tu número de teléfono">
+                    </div>
+
+                    <div class="duracion-info">
+                        <p><strong>📅 Duración del anuncio:</strong> 30 días</p>
+                        <p><small>Tu anuncio será visible por 30 días. Recibirás un recordatorio 5 días antes de que expire.</small></p>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        🚀 Publicar Anuncio
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="recent-ads">
+            <h2 class="section-title">🆕 Anuncios Recientes</h2>
+            <div class="ad-item">
+                <div class="ad-title">iPhone 14 Pro Max - Como nuevo</div>
+                <div class="ad-category">📱 Electrónicos</div>
+                <div class="ad-preview">Vendo iPhone 14 Pro Max de 256GB en excelente estado, apenas 6 meses de uso...</div>
+            </div>
+            <div class="ad-item">
+                <div class="ad-title">Apartamento 2 habitaciones - Centro</div>
+                <div class="ad-category">🏠 Inmuebles</div>
+                <div class="ad-preview">Se arrienda hermoso apartamento en el centro de la ciudad, 2 habitaciones...</div>
+            </div>
+            <div class="ad-item">
+                <div class="ad-title">Honda Civic 2020 - Impecable</div>
+                <div class="ad-category">🚗 Vehículos</div>
+                <div class="ad-preview">Vendo Honda Civic 2020, único dueño, todos los servicios al día...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array para almacenar los anuncios
+        let anuncios = [
+            {
+                nombre: "María González",
+                email: "maria@email.com",
+                categoria: "electronica",
+                descripcion: "Vendo iPhone 14 Pro Max de 256GB en excelente estado, apenas 6 meses de uso..."
+            },
+            {
+                nombre: "Carlos Ruiz",
+                email: "carlos@email.com",
+                categoria: "inmuebles",
+                descripcion: "Se arrienda hermoso apartamento en el centro de la ciudad, 2 habitaciones..."
+            },
+            {
+                nombre: "Ana Torres",
+                email: "ana@email.com",
+                categoria: "vehiculos",
+                descripcion: "Vendo Honda Civic 2020, único dueño, todos los servicios al día..."
+            }
+        ];
+
+        // Función para enviar email de notificación (simulado)
+        async function enviarNotificacionEmail(anuncio) {
+            // Simular envío de email
+            console.log("📧 Enviando notificación por email...");
+            
+            const emailData = {
+                to: EMAIL_CONFIG.adminEmail,
+                subject: "🆕 Nuevo Clasificado Publicado",
+                body: `
+                    Nuevo clasificado recibido:
+                    
+                    👤 Nombre: ${anuncio.nombre}
+                    📧 Email: ${anuncio.email}
+                    📞 Teléfono: ${anuncio.telefono || 'No proporcionado'}
+                    📂 Categoría: ${anuncio.categoria}
+                    📝 Descripción: ${anuncio.descripcion}
+                    📅 Fecha: ${anuncio.fechaCreacion.toLocaleDateString()}
+                    ⏰ Expira: ${anuncio.fechaExpiracion.toLocaleDateString()}
+                `
+            };
+            
+            // Aquí implementarías el servicio real de email
+            // Opciones populares:
+            // 1. EmailJS (frontend)
+            // 2. Formspree 
+            // 3. Netlify Forms
+            // 4. Backend con Nodemailer
+            
+            try {
+                // Simulación de envío exitoso
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                console.log("✅ Email enviado exitosamente");
+                
+                // También enviar confirmación al usuario
+                const confirmacionUsuario = {
+                    to: anuncio.email,
+                    subject: "✅ Tu clasificado ha sido publicado",
+                    body: `
+                        Hola ${anuncio.nombre},
+                        
+                        Tu clasificado ha sido publicado exitosamente:
+                        
+                        📂 Categoría: ${anuncio.categoria}
+                        📝 Descripción: ${anuncio.descripcion.substring(0, 100)}...
+                        📅 Fecha de publicación: ${anuncio.fechaCreacion.toLocaleDateString()}
+                        📅 Fecha de expiración: ${anuncio.fechaExpiracion.toLocaleDateString()}
+                        
+                        Te enviaremos un recordatorio 5 días antes de que expire.
+                        
+                        Gracias por usar nuestro servicio de clasificados.
+                    `
+                };
+                
+                return true;
+            } catch (error) {
+                console.error("❌ Error enviando email:", error);
+                return false;
+            }
+        }
+
+        // Función para calcular días restantes
+        function calcularDiasRestantes(fechaExpiracion) {
+            const ahora = new Date();
+            const diferencia = fechaExpiracion - ahora;
+            return Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+        }
+
+        // Función para obtener el estado del anuncio
+        function obtenerEstadoAnuncio(anuncio) {
+            const diasRestantes = calcularDiasRestantes(anuncio.fechaExpiracion);
+            
+            if (diasRestantes <= 0) {
+                return { estado: 'expirado', clase: 'status-expired', texto: 'Expirado' };
+            } else if (diasRestantes <= 5) {
+                return { estado: 'expirando', clase: 'status-expiring', texto: `Expira en ${diasRestantes} días` };
+            } else {
+                return { estado: 'activo', clase: 'status-active', texto: `${diasRestantes} días restantes` };
+            }
+        }
+
+        // Función para editar anuncio
+        function editarAnuncio(id) {
+            const anuncio = anuncios.find(a => a.id === id);
+            if (!anuncio) return;
+            
+            const editForm = document.getElementById(`edit-form-${id}`);
+            const adItem = document.getElementById(`ad-${id}`);
+            
+            if (editForm.style.display === 'none' || !editForm.style.display) {
+                editForm.style.display = 'block';
+                document.getElementById(`edit-desc-${id}`).value = anuncio.descripcion;
+            } else {
+                editForm.style.display = 'none';
+            }
+        }
+
+        // Función para guardar edición
+        function guardarEdicion(id) {
+            const anuncio = anuncios.find(a => a.id === id);
+            if (!anuncio) return;
+            
+            const nuevaDescripcion = document.getElementById(`edit-desc-${id}`).value;
+            anuncio.descripcion = nuevaDescripcion;
+            
+            // Ocultar formulario de edición
+            document.getElementById(`edit-form-${id}`).style.display = 'none';
+            
+            // Actualizar vista
+            actualizarAnunciosRecientes();
+            
+            alert('✅ Anuncio actualizado exitosamente');
+        }
+
+        // Función para eliminar anuncio
+        function eliminarAnuncio(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar este anuncio?')) {
+                const index = anuncios.findIndex(a => a.id === id);
+                if (index > -1) {
+                    anuncios.splice(index, 1);
+                    actualizarAnunciosRecientes();
+                    alert('❌ Anuncio eliminado exitosamente');
+                }
+            }
+        }
+
+        // Función para seleccionar categoría desde las tarjetas
+        function selectCategory(categoria) {
+            const select = document.getElementById('categoria');
+            select.value = categoria;
+            select.focus();
+            
+            // Scroll suave al formulario
+            document.querySelector('.form-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Función para manejar el envío del formulario
+        document.getElementById('clasificadoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nuevoId = anuncios.length > 0 ? Math.max(...anuncios.map(a => a.id)) + 1 : 1;
+            const fechaCreacion = new Date();
+            const fechaExpiracion = new Date(fechaCreacion.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días
+            
+            const formData = {
+                id: nuevoId,
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                telefono: document.getElementById('telefono').value,
+                categoria: document.getElementById('categoria').value,
+                descripcion: document.getElementById('descripcion').value,
+                fechaCreacion: fechaCreacion,
+                fechaExpiracion: fechaExpiracion,
+                activo: true
+            };
+            
+            // Agregar el nuevo anuncio al array
+            anuncios.unshift(formData);
+            
+            // Enviar notificación por email
+            const emailEnviado = await enviarNotificacionEmail(formData);
+            
+            // Mostrar mensaje de éxito
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            
+            // Actualizar la lista de anuncios recientes
+            actualizarAnunciosRecientes();
+            
+            // Limpiar el formulario
+            this.reset();
+            
+            // Ocultar mensaje de éxito después de 5 segundos
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+            
+            // Scroll suave a los anuncios recientes
+            setTimeout(() => {
+                document.querySelector('.recent-ads').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }, 1000);
         });
-      } catch (e) {
-        console.error("Error al guardar:", e);
-        alert("No se pudo publicar el anuncio.");
-      }
-    }
 
-    document.getElementById("form-clasificado").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const data = {
-        nombre: document.getElementById("nombre").value.trim(),
-        mensaje: document.getElementById("mensaje").value.trim()
-      };
-      if (data.nombre && data.mensaje) {
-        guardarClasificado(data);
-        e.target.reset();
-      }
-    });
+        // Función para actualizar la lista de anuncios recientes
+        function actualizarAnunciosRecientes() {
+            const recentAdsSection = document.querySelector('.recent-ads');
+            const categoryIcons = {
+                'vehiculos': '🚗',
+                'inmuebles': '🏠',
+                'electronica': '📱',
+                'muebles': '🛋️',
+                'ropa': '👕',
+                'servicios': '🔧'
+            };
+            
+            const categoryNames = {
+                'vehiculos': 'Vehículos',
+                'inmuebles': 'Inmuebles',
+                'electronica': 'Electrónicos',
+                'muebles': 'Muebles',
+                'ropa': 'Ropa',
+                'servicios': 'Servicios'
+            };
+            
+            // Limpiar contenido actual (excepto el título)
+            const title = recentAdsSection.querySelector('.section-title');
+            recentAdsSection.innerHTML = '';
+            recentAdsSection.appendChild(title);
+            
+            // Filtrar anuncios activos y mostrar los más recientes
+            const anunciosActivos = anuncios.filter(anuncio => {
+                const diasRestantes = calcularDiasRestantes(anuncio.fechaExpiracion);
+                return diasRestantes > 0; // Solo mostrar anuncios no expirados
+            });
+            
+            anunciosActivos.slice(0, 5).forEach(anuncio => {
+                const adItem = document.createElement('div');
+                adItem.className = 'ad-item';
+                adItem.id = `ad-${anuncio.id}`;
+                
+                // Extraer título de la descripción (primeras palabras)
+                const titulo = anuncio.descripcion.substring(0, 50) + '...';
+                const estado = obtenerEstadoAnuncio(anuncio);
+                
+                adItem.innerHTML = `
+                    <div class="ad-title">${titulo}</div>
+                    <div class="ad-category">${categoryIcons[anuncio.categoria]} ${categoryNames[anuncio.categoria]}</div>
+                    <div class="ad-preview">${anuncio.descripcion.substring(0, 80)}...</div>
+                    <div class="ad-status ${estado.clase}">📅 ${estado.texto}</div>
+                    <div class="ad-actions">
+                        <button class="btn-small btn-edit" onclick="editarAnuncio(${anuncio.id})">✏️ Editar</button>
+                        <button class="btn-small btn-delete" onclick="eliminarAnuncio(${anuncio.id})">🗑️ Eliminar</button>
+                    </div>
+                    <div id="edit-form-${anuncio.id}" class="edit-form">
+                        <textarea id="edit-desc-${anuncio.id}" placeholder="Edita tu descripción..."></textarea>
+                        <button class="btn-small btn-edit" onclick="guardarEdicion(${anuncio.id})">💾 Guardar</button>
+                        <button class="btn-small" onclick="document.getElementById('edit-form-${anuncio.id}').style.display='none'">❌ Cancelar</button>
+                    </div>
+                `;
+                
+                recentAdsSection.appendChild(adItem);
+            });
+            
+            // Mostrar mensaje si no hay anuncios
+            if (anunciosActivos.length === 0) {
+                const noAdsMessage = document.createElement('div');
+                noAdsMessage.className = 'ad-item';
+                noAdsMessage.innerHTML = `
+                    <div class="ad-title">No hay anuncios activos</div>
+                    <div class="ad-preview">Sé el primero en publicar un clasificado</div>
+                `;
+                recentAdsSection.appendChild(noAdsMessage);
+            }
+        }
 
-    const lista = document.getElementById("lista-clasificados");
-    const q = query(collection(db, "clasificados"), orderBy("fecha", "desc"));
-
-    onSnapshot(q, (snapshot) => {
-      lista.innerHTML = "";
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        const li = document.createElement("li");
-        const fecha = d.fecha.toDate().toLocaleString();
-        li.textContent = `[${fecha}] ${d.nombre}: ${d.mensaje}`;
-        lista.appendChild(li);
-      });
-    });
-  </script>
+        // Agregar animaciones al cargar la página
+        window.addEventListener('load', function() {
+            const elements = document.querySelectorAll('.category-card, .ad-item');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
 </body>
 </html>
