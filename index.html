@@ -1017,33 +1017,76 @@
         });
     </script>
 
-    <!-- 🔥 FIREBASE INTEGRATION -->
-    <script type="module">
-        // Import Firebase
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            query, 
-            where, 
-            orderBy, 
-            limit,
-            Timestamp 
-        } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+    <!-- 🔥 FIREBASE INTEGRATION v8 (Compatible) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-        // 🔥 REEMPLAZA ESTA CONFIGURACIÓN CON LA TUYA DE FIREBASE CONSOLE
-        const firebaseConfig = {
-  apiKey: "AIzaSyAy4pQUJjWe-jYYToxqxfIoOJBgvS4aWwg",
-  authDomain: "clasificados-606d5.firebaseapp.com",
-  databaseURL: "https://clasificados-606d5-default-rtdb.firebaseio.com",
-  projectId: "clasificados-606d5",
-  storageBucket: "clasificados-606d5.firebasestorage.app",
-  messagingSenderId: "809246084580",
-  appId: "1:809246084580:web:373891ac187c118d2c4bf1",
-  measurementId: "G-P6BPEPPS0E"
-};
+<script>
+    // Tu configuración Firebase (mantén la que ya tienes)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAy4pQUJjWe-jYYToxqxfIoOJBgvS4aWwg",
+        authDomain: "clasificados-606d5.firebaseapp.com",
+        projectId: "clasificados-606d5",
+        storageBucket: "clasificados-606d5.appspot.com",
+        messagingSenderId: "809246084580",
+        appId: "1:809246084580:web:373891ac187c118d2c4bf1"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    window.firebaseConfig = firebaseConfig;
+
+    // Función para guardar clasificados
+    window.guardarClasificado = async function(clasificado) {
+        try {
+            const docRef = await window.db.collection('clasificados').add({
+                ...clasificado,
+                fechaCreacion: firebase.firestore.Timestamp.now(),
+                fechaExpiracion: firebase.firestore.Timestamp.fromDate(
+                    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                ),
+                activo: true
+            });
+            console.log("✅ Clasificado guardado con ID:", docRef.id);
+            return docRef.id;
+        } catch (error) {
+            console.error("❌ Error guardando:", error);
+            throw error;
+        }
+    };
+
+    // Función para cargar clasificados
+    window.cargarClasificados = async function() {
+        try {
+            const querySnapshot = await window.db.collection('clasificados')
+                .where('activo', '==', true)
+                .orderBy('fechaCreacion', 'desc')
+                .get();
+            
+            const clasificados = [];
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                clasificados.push({
+                    id: doc.id,
+                    ...data,
+                    fechaCreacion: data.fechaCreacion.toDate(),
+                    fechaExpiracion: data.fechaExpiracion.toDate()
+                });
+            });
+            
+            console.log("📊 Cargados", clasificados.length, "clasificados desde Firebase");
+            return clasificados;
+        } catch (error) {
+            console.error("❌ Error cargando clasificados:", error);
+            throw error;
+        }
+    };
+
+    console.log("🔥 Firebase v8 inicializado");
+</script>
+
+    
 
         // Inicializar Firebase
         let app, db;
