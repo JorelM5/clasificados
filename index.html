@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificados El DChaleco - Publica tu anuncio gratis</title>
+    <title>Clasificados DChaleco - Publica tu anuncio gratis</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
     <style>
         * {
@@ -83,6 +83,38 @@
             display: flex;
             gap: 15px;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(33, 150, 243, 0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #2196F3;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #2196F3;
+        }
+
+        .admin-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
         }
 
         .btn {
@@ -118,6 +150,21 @@
             color: white;
         }
 
+        .btn-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 15px;
+        }
+
         .main-content {
             display: grid;
             grid-template-columns: 1fr 300px;
@@ -145,6 +192,20 @@
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
+        }
+
+        .login-required {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 235, 59, 0.1);
+            border: 2px dashed #FFC107;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .login-required h3 {
+            color: #F57C00;
+            margin-bottom: 15px;
         }
 
         .form-group {
@@ -265,11 +326,42 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border-left: 4px solid #2196F3;
             transition: transform 0.3s ease;
+            position: relative;
         }
 
         .ad-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .ad-item.own-ad {
+            border-left-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.02);
+        }
+
+        .ad-item.admin-view {
+            border-left-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.02);
+        }
+
+        .ownership-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .ownership-badge.own {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .ownership-badge.admin {
+            background: #ffebee;
+            color: #c62828;
         }
 
         .ad-header {
@@ -344,6 +436,7 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .edit-btn, .delete-btn {
@@ -397,6 +490,95 @@
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .admin-panel {
+            background: rgba(231, 76, 60, 0.05);
+            border: 2px solid rgba(231, 76, 60, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .admin-panel h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .admin-stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+        }
+
+        .admin-stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .admin-stat-label {
+            font-size: 0.8em;
+            color: #666;
         }
 
         footer {
@@ -468,6 +650,17 @@
                 align-self: stretch;
                 justify-content: center;
             }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -478,11 +671,28 @@
                 <div class="logo-section">
                     <div class="logo">📰</div>
                     <div>
-                        <div class="site-title">Clasificados El Chaleco</div>
+                        <div class="site-title">Clasificados DChaleco</div>
                         <div class="subtitle">Publica tu anuncio gratis y encuentra lo que buscas</div>
                     </div>
                 </div>
                 <div class="header-actions">
+                    <div id="userSection" style="display: none;">
+                        <div class="user-info">
+                            <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                            <div>
+                                <div class="user-name" id="userName"></div>
+                                <div id="adminBadge" class="admin-badge" style="display: none;">ADMIN</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-small" onclick="cerrarSesion()">
+                            🚪 Cerrar Sesión
+                        </button>
+                    </div>
+                    <div id="loginSection">
+                        <button class="btn" onclick="iniciarSesion()">
+                            🔐 Iniciar Sesión
+                        </button>
+                    </div>
                     <button class="btn" onclick="scrollToSection('form')">
                         ✨ Publicar Anuncio
                     </button>
@@ -495,11 +705,52 @@
 
         <div class="main-content">
             <div class="content-section">
+                <!-- Panel de Administrador -->
+                <div id="adminPanel" class="admin-panel" style="display: none;">
+                    <h3>🛠️ Panel de Administrador</h3>
+                    <div class="admin-stats">
+                        <div class="admin-stat">
+                            <div class="admin-stat-number" id="adminTotalAnuncios">0</div>
+                            <div class="admin-stat-label">Total</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-number" id="adminAnunciosActivos">0</div>
+                            <div class="admin-stat-label">Activos</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-number" id="adminAnunciosInactivos">0</div>
+                            <div class="admin-stat-label">Inactivos</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-number" id="adminAnunciosHoy">0</div>
+                            <div class="admin-stat-label">Hoy</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-small" onclick="toggleAdminView()">
+                            👁️ <span id="adminViewText">Ver todos los anuncios</span>
+                        </button>
+                        <button class="btn btn-danger btn-small" onclick="limpiarAnunciosExpirados()">
+                            🗑️ Limpiar expirados
+                        </button>
+                    </div>
+                </div>
+
                 <section id="form">
                     <h2>📝 Publica tu Clasificado</h2>
                     <p style="margin-bottom: 25px; color: #666;">Completa el formulario para publicar tu anuncio de forma gratuita</p>
                     
-                    <form id="clasificadoForm">
+                    <div id="loginRequired" class="login-required">
+                        <h3>🔐 Inicia sesión para publicar</h3>
+                        <p style="margin-bottom: 20px; color: #666;">
+                            Para publicar anuncios y poder editarlos o eliminarlos después, necesitas iniciar sesión con tu cuenta de Google.
+                        </p>
+                        <button class="btn" onclick="iniciarSesion()">
+                            🔐 Iniciar Sesión con Google
+                        </button>
+                    </div>
+                    
+                    <form id="clasificadoForm" style="display: none;">
                         <div class="form-group">
                             <label for="nombre">🏷️ Título del anuncio *</label>
                             <input type="text" id="nombre" name="nombre" required 
@@ -608,6 +859,7 @@
                         <li style="margin-bottom: 10px;">⏰ Anuncios activos por 30 días</li>
                         <li style="margin-bottom: 10px;">📧 Contacto directo por email</li>
                         <li style="margin-bottom: 10px;">🔒 Información segura</li>
+                        <li style="margin-bottom: 10px;">👤 Solo tú puedes editar/eliminar tus anuncios</li>
                     </ul>
                 </div>
 
@@ -615,48 +867,205 @@
                     <h3>📞 Contacto</h3>
                     <p style="margin-bottom: 10px;">¿Necesitas ayuda?</p>
                     <p style="color: #666; font-size: 0.9em;">
-                        📧 soporte@clasificadoschaleco.com<br>
-                        📱 WhatsApp: +1234567890
+                        📧 admin@dchaleco.com<br>
+                        📞 Teléfono: (916) 455-8757
                     </p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Modal para editar anuncio -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">✏️ Editar Anuncio</h2>
+                    <span class="close" onclick="cerrarModal('editModal')">&times;</span>
+                </div>
+                <form id="editForm">
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label for="editNombre">🏷️ Título del anuncio *</label>
+                        <input type="text" id="editNombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategoria">📂 Categoría *</label>
+                        <select id="editCategoria" name="categoria" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="vehiculos">🚗 Vehículos</option>
+                            <option value="inmuebles">🏠 Inmuebles</option>
+                            <option value="electronica">📱 Electrónica</option>
+                            <option value="empleos">💼 Empleos</option>
+                            <option value="servicios">🔧 Servicios</option>
+                            <option value="hogar">🏡 Hogar y jardín</option>
+                            <option value="ropa">👕 Ropa y accesorios</option>
+                            <option value="general">📋 General</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDescripcion">📋 Descripción *</label>
+                        <textarea id="editDescripcion" name="descripcion" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">📧 Email de contacto *</label>
+                        <input type="email" id="editEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTelefono">📞 Teléfono (opcional)</label>
+                        <input type="tel" id="editTelefono" name="telefono">
+                    </div>
+                    <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 25px;">
+                        <button type="button" class="btn btn-secondary" onclick="cerrarModal('editModal')">
+                            ❌ Cancelar
+                        </button>
+                        <button type="submit" class="btn">
+                            💾 Guardar Cambios
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
         <footer>
             <div class="footer-content">
                 <div class="footer-links">
-                    <a href="#" onclick="alert('Próximamente')">Términos y Condiciones</a>
-                    <a href="#" onclick="alert('Próximamente')">Política de Privacidad</a>
+                    <a href="terminos.html" target="_blank">Términos y Condiciones</a>
+                    <a href="privacidad.html" target="_blank">Política de Privacidad</a>
                     <a href="#" onclick="alert('Próximamente')">Ayuda</a>
                     <a href="#" onclick="alert('Próximamente')">Contacto</a>
                 </div>
-                <p>&copy; 2024 Clasificados El Chaleco. Todos los derechos reservados.</p>
+                <p>&copy; 2025 Clasificados DChaleco. Todos los derechos reservados.</p>
             </div>
         </footer>
     </div>
 
-    <!-- 🔥 FIREBASE INTEGRATION v8 -->
+    <!-- 🔥 FIREBASE INTEGRATION v8 + AUTH -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
         // 🔥 TU CONFIGURACIÓN FIREBASE - REEMPLAZA CON TUS DATOS REALES
         const firebaseConfig = {
-            apiKey: "AIzaSyAy4pQUJjWe-jYYToxqxfIoOJBgvS4aWwg",
-            authDomain: "clasificados-606d5.firebaseapp.com",
-            projectId: "clasificados-606d5",
-            storageBucket: "clasificados-606d5.firebasestorage.appm",
-            messagingSenderId: "809246084580",
-            appId: "1:809246084580:web:373891ac187c118d2c4bf1"
+            apiKey: "TU_API_KEY_AQUI",
+            authDomain: "TU_PROJECT_ID.firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_PROJECT_ID.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
         };
 
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         window.db = firebase.firestore();
+        window.auth = firebase.auth();
         window.firebaseConfig = firebaseConfig;
 
-        // Función para guardar clasificados
+        // Usuario administrador
+        const ADMIN_EMAIL = 'admin@dchaleco.com';
+
+        // Variables globales
+        window.anuncios = [];
+        window.currentUser = null;
+        window.isAdmin = false;
+        window.adminViewMode = false;
+        let paginaActual = 1;
+        const anunciosPorPagina = 12;
+
+        // Configurar proveedor de Google
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+
+        // Función para iniciar sesión
+        async function iniciarSesion() {
+            try {
+                const result = await window.auth.signInWithPopup(googleProvider);
+                console.log('✅ Usuario logueado:', result.user.email);
+            } catch (error) {
+                console.error('❌ Error al iniciar sesión:', error);
+                alert('Error al iniciar sesión. Inténtalo de nuevo.');
+            }
+        }
+
+        // Función para cerrar sesión
+        async function cerrarSesion() {
+            try {
+                await window.auth.signOut();
+                console.log('✅ Sesión cerrada');
+            } catch (error) {
+                console.error('❌ Error al cerrar sesión:', error);
+            }
+        }
+
+        // Observer del estado de autenticación
+        window.auth.onAuthStateChanged(function(user) {
+            window.currentUser = user;
+            window.isAdmin = user && user.email === ADMIN_EMAIL;
+            
+            actualizarInterfazUsuario();
+            
+            if (user) {
+                console.log('👤 Usuario:', user.email, window.isAdmin ? '(ADMIN)' : '');
+                // Precargar email en el formulario
+                const emailInput = document.getElementById('email');
+                if (emailInput) {
+                    emailInput.value = user.email;
+                }
+            } else {
+                console.log('👤 Sin usuario logueado');
+            }
+            
+            // Recargar anuncios con la nueva perspectiva
+            if (window.anuncios.length > 0) {
+                actualizarAnunciosRecientes();
+            }
+        });
+
+        // Función para actualizar la interfaz de usuario
+        function actualizarInterfazUsuario() {
+            const userSection = document.getElementById('userSection');
+            const loginSection = document.getElementById('loginSection');
+            const loginRequired = document.getElementById('loginRequired');
+            const clasificadoForm = document.getElementById('clasificadoForm');
+            const adminPanel = document.getElementById('adminPanel');
+
+            if (window.currentUser) {
+                // Usuario logueado
+                userSection.style.display = 'flex';
+                loginSection.style.display = 'none';
+                loginRequired.style.display = 'none';
+                clasificadoForm.style.display = 'block';
+
+                // Actualizar info del usuario
+                document.getElementById('userName').textContent = window.currentUser.displayName || window.currentUser.email;
+                document.getElementById('userAvatar').src = window.currentUser.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%232196F3"/><text x="50" y="55" text-anchor="middle" fill="white" font-size="30">👤</text></svg>';
+
+                // Mostrar badge de admin
+                const adminBadge = document.getElementById('adminBadge');
+                if (window.isAdmin) {
+                    adminBadge.style.display = 'block';
+                    adminPanel.style.display = 'block';
+                    actualizarEstadisticasAdmin();
+                } else {
+                    adminBadge.style.display = 'none';
+                    adminPanel.style.display = 'none';
+                }
+            } else {
+                // Usuario no logueado
+                userSection.style.display = 'none';
+                loginSection.style.display = 'block';
+                loginRequired.style.display = 'block';
+                clasificadoForm.style.display = 'none';
+                adminPanel.style.display = 'none';
+            }
+        }
+
+        // Función para guardar clasificados (con usuario)
         window.guardarClasificado = async function(clasificado) {
+            if (!window.currentUser) {
+                throw new Error('Debes iniciar sesión para publicar anuncios');
+            }
+
             try {
                 const docRef = await window.db.collection('clasificados').add({
                     ...clasificado,
@@ -664,7 +1073,10 @@
                     fechaExpiracion: firebase.firestore.Timestamp.fromDate(
                         new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
                     ),
-                    activo: true
+                    activo: true,
+                    userId: window.currentUser.uid,
+                    userEmail: window.currentUser.email,
+                    userName: window.currentUser.displayName || window.currentUser.email
                 });
                 console.log("✅ Clasificado guardado con ID:", docRef.id);
                 return docRef.id;
@@ -678,7 +1090,6 @@
         window.cargarClasificados = async function() {
             try {
                 const querySnapshot = await window.db.collection('clasificados')
-                    .where('activo', '==', true)
                     .orderBy('fechaCreacion', 'desc')
                     .get();
                 
@@ -701,15 +1112,6 @@
             }
         };
 
-        console.log("🔥 Firebase v8 inicializado");
-    </script>
-
-    <script>
-        // Variables globales
-        window.anuncios = [];
-        let paginaActual = 1;
-        const anunciosPorPagina = 12;
-
         // Función para obtener color de categoría
         function obtenerColorCategoria(categoria) {
             const colores = {
@@ -727,8 +1129,8 @@
 
         // Función para cambiar página
         function cambiarPagina(direccion) {
-            const totalAnuncios = window.anuncios ? window.anuncios.filter(a => a.activo).length : 0;
-            const totalPaginas = Math.ceil(totalAnuncios / anunciosPorPagina);
+            const anunciosFiltrados = obtenerAnunciosFiltrados();
+            const totalPaginas = Math.ceil(anunciosFiltrados.length / anunciosPorPagina);
             
             paginaActual += direccion;
             
@@ -736,6 +1138,28 @@
             if (paginaActual > totalPaginas) paginaActual = totalPaginas;
             
             actualizarAnunciosRecientes();
+        }
+
+        // Función para obtener anuncios filtrados según el modo
+        function obtenerAnunciosFiltrados() {
+            if (!window.anuncios) return [];
+            
+            if (window.isAdmin && window.adminViewMode) {
+                // Admin ve todos los anuncios
+                return window.anuncios.sort((a, b) => {
+                    const fechaA = a.fechaCreacion instanceof Date ? a.fechaCreacion : new Date(a.fechaCreacion);
+                    const fechaB = b.fechaCreacion instanceof Date ? b.fechaCreacion : new Date(b.fechaCreacion);
+                    return fechaB - fechaA;
+                });
+            } else {
+                // Vista normal: solo anuncios activos
+                return window.anuncios.filter(anuncio => anuncio && anuncio.activo)
+                                     .sort((a, b) => {
+                                         const fechaA = a.fechaCreacion instanceof Date ? a.fechaCreacion : new Date(a.fechaCreacion);
+                                         const fechaB = b.fechaCreacion instanceof Date ? b.fechaCreacion : new Date(b.fechaCreacion);
+                                         return fechaB - fechaA;
+                                     });
+            }
         }
 
         // Función para determinar el estado del anuncio
@@ -750,6 +1174,13 @@
             } else {
                 return { texto: 'Activo', clase: 'status-active' };
             }
+        }
+
+        // Función para verificar si el usuario puede editar/eliminar
+        function puedeEditarAnuncio(anuncio) {
+            if (!window.currentUser) return false;
+            if (window.isAdmin) return true;
+            return anuncio.userId === window.currentUser.uid;
         }
 
         // Función para mostrar anuncios recientes
@@ -768,25 +1199,17 @@
                 return;
             }
 
-            const anunciosActivos = window.anuncios.filter(anuncio => anuncio && anuncio.activo)
-                                                  .sort((a, b) => {
-                                                      const fechaA = a.fechaCreacion instanceof Date ? a.fechaCreacion : new Date(a.fechaCreacion);
-                                                      const fechaB = b.fechaCreacion instanceof Date ? b.fechaCreacion : new Date(b.fechaCreacion);
-                                                      return fechaB - fechaA;
-                                                  });
-
-            const totalAnuncios = anunciosActivos.length;
+            const anunciosFiltrados = obtenerAnunciosFiltrados();
+            const totalAnuncios = anunciosFiltrados.length;
             const totalPaginas = Math.ceil(totalAnuncios / anunciosPorPagina);
             
-            // Ajustar página actual si es necesario
             if (paginaActual > totalPaginas && totalPaginas > 0) {
                 paginaActual = totalPaginas;
             }
 
-            // Calcular índices para paginación
             const inicio = (paginaActual - 1) * anunciosPorPagina;
             const fin = inicio + anunciosPorPagina;
-            const anunciosPagina = anunciosActivos.slice(inicio, fin);
+            const anunciosPagina = anunciosFiltrados.slice(inicio, fin);
 
             console.log("📊 Mostrando", anunciosPagina.length, "de", totalAnuncios, "anuncios (página", paginaActual, "de", totalPaginas, ")");
 
@@ -797,13 +1220,12 @@
             }
 
             container.innerHTML = anunciosPagina.map(anuncio => {
-                // Manejar fechas de forma segura
                 let fechaExpiracion;
                 try {
                     fechaExpiracion = anuncio.fechaExpiracion instanceof Date ? 
                         anuncio.fechaExpiracion : new Date(anuncio.fechaExpiracion);
                 } catch (e) {
-                    fechaExpiracion = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 días por defecto
+                    fechaExpiracion = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
                 }
                 
                 let fechaCreacion;
@@ -811,14 +1233,28 @@
                     fechaCreacion = anuncio.fechaCreacion instanceof Date ? 
                         anuncio.fechaCreacion : new Date(anuncio.fechaCreacion);
                 } catch (e) {
-                    fechaCreacion = new Date(); // Hoy por defecto
+                    fechaCreacion = new Date();
                 }
 
                 const estado = obtenerEstadoAnuncio(fechaExpiracion);
                 const telefono = anuncio.telefono ? ` | Tel: ${anuncio.telefono}` : '';
+                const puedeEditar = puedeEditarAnuncio(anuncio);
+                
+                // Determinar clases y badges
+                let claseItem = 'ad-item';
+                let ownershipBadge = '';
+                
+                if (window.currentUser && anuncio.userId === window.currentUser.uid) {
+                    claseItem += ' own-ad';
+                    ownershipBadge = '<div class="ownership-badge own">Tuyo</div>';
+                } else if (window.isAdmin && window.adminViewMode) {
+                    claseItem += ' admin-view';
+                    ownershipBadge = '<div class="ownership-badge admin">Admin</div>';
+                }
                 
                 return `
-                    <div class="ad-item">
+                    <div class="${claseItem}">
+                        ${ownershipBadge}
                         <div class="ad-header">
                             <div>
                                 <div class="ad-title">${anuncio.nombre || 'Sin nombre'}</div>
@@ -831,15 +1267,21 @@
                             <div class="ad-contact">📧 ${anuncio.email || 'Sin email'}${telefono}</div>
                             <div class="ad-date">📅 ${fechaCreacion.toLocaleDateString()}</div>
                         </div>
-                        <div class="ad-actions">
-                            <button class="edit-btn" onclick="editarAnuncio('${anuncio.id}')">✏️ Editar</button>
-                            <button class="delete-btn" onclick="eliminarAnuncio('${anuncio.id}')">🗑️ Eliminar</button>
-                        </div>
+                        ${puedeEditar ? `
+                            <div class="ad-actions">
+                                <button class="edit-btn" onclick="editarAnuncio('${anuncio.id}')">✏️ Editar</button>
+                                <button class="delete-btn" onclick="eliminarAnuncio('${anuncio.id}')">🗑️ Eliminar</button>
+                            </div>
+                        ` : ''}
+                        ${window.isAdmin && window.adminViewMode ? `
+                            <div style="margin-top: 10px; padding: 10px; background: rgba(231, 76, 60, 0.1); border-radius: 5px; font-size: 0.9em;">
+                                <strong>Info Admin:</strong> Usuario: ${anuncio.userName || anuncio.userEmail} | ID: ${anuncio.id}
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
 
-            // Actualizar contadores y controles de paginación
             actualizarContadores();
             actualizarControlesPaginacion(paginaActual, totalPaginas);
             console.log("✅ Vista actualizada correctamente");
@@ -872,7 +1314,6 @@
                 ropa: anunciosActivos.filter(a => a.categoria === 'ropa').length
             };
 
-            // Actualizar elementos del DOM
             Object.keys(contadores).forEach(categoria => {
                 const elemento = document.getElementById(categoria === 'total' ? 'totalAnuncios' : `${categoria}Count`);
                 if (elemento) {
@@ -881,15 +1322,140 @@
             });
         }
 
-        // Funciones para editar y eliminar (placeholder)
-        function editarAnuncio(id) {
-            alert(`Función de editar anuncio ${id} - Por implementar`);
+        // Función para actualizar estadísticas de admin
+        function actualizarEstadisticasAdmin() {
+            if (!window.isAdmin || !window.anuncios) return;
+
+            const total = window.anuncios.length;
+            const activos = window.anuncios.filter(a => a.activo).length;
+            const inactivos = total - activos;
+            
+            // Anuncios de hoy
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const hoyCount = window.anuncios.filter(a => {
+                const fechaAnuncio = a.fechaCreacion instanceof Date ? a.fechaCreacion : new Date(a.fechaCreacion);
+                fechaAnuncio.setHours(0, 0, 0, 0);
+                return fechaAnuncio.getTime() === hoy.getTime();
+            }).length;
+
+            document.getElementById('adminTotalAnuncios').textContent = total;
+            document.getElementById('adminAnunciosActivos').textContent = activos;
+            document.getElementById('adminAnunciosInactivos').textContent = inactivos;
+            document.getElementById('adminAnunciosHoy').textContent = hoyCount;
         }
 
-        function eliminarAnuncio(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar este anuncio?')) {
-                alert(`Función de eliminar anuncio ${id} - Por implementar`);
+        // Función para alternar vista de administrador
+        function toggleAdminView() {
+            if (!window.isAdmin) return;
+            
+            window.adminViewMode = !window.adminViewMode;
+            const texto = document.getElementById('adminViewText');
+            texto.textContent = window.adminViewMode ? 'Ver solo activos' : 'Ver todos los anuncios';
+            
+            paginaActual = 1;
+            actualizarAnunciosRecientes();
+        }
+
+        // Función para limpiar anuncios expirados
+        async function limpiarAnunciosExpirados() {
+            if (!window.isAdmin) return;
+            
+            if (!confirm('¿Estás seguro de que quieres eliminar permanentemente todos los anuncios expirados?')) {
+                return;
             }
+
+            try {
+                const ahora = new Date();
+                const anunciosExpirados = window.anuncios.filter(a => {
+                    const fechaExp = a.fechaExpiracion instanceof Date ? a.fechaExpiracion : new Date(a.fechaExpiracion);
+                    return fechaExp < ahora;
+                });
+
+                if (anunciosExpirados.length === 0) {
+                    alert('No hay anuncios expirados para eliminar.');
+                    return;
+                }
+
+                const batch = window.db.batch();
+                anunciosExpirados.forEach(anuncio => {
+                    const docRef = window.db.collection('clasificados').doc(anuncio.id);
+                    batch.delete(docRef);
+                });
+
+                await batch.commit();
+                
+                alert(`✅ ${anunciosExpirados.length} anuncios expirados eliminados.`);
+                
+                // Recargar anuncios
+                window.anuncios = await window.cargarClasificados();
+                actualizarAnunciosRecientes();
+                
+            } catch (error) {
+                console.error('❌ Error limpiando anuncios:', error);
+                alert('Error al limpiar anuncios expirados.');
+            }
+        }
+
+        // Función para editar anuncio
+        async function editarAnuncio(id) {
+            const anuncio = window.anuncios.find(a => a.id === id);
+            if (!anuncio) {
+                alert('Anuncio no encontrado.');
+                return;
+            }
+
+            if (!puedeEditarAnuncio(anuncio)) {
+                alert('No tienes permisos para editar este anuncio.');
+                return;
+            }
+
+            // Llenar el formulario de edición
+            document.getElementById('editId').value = anuncio.id;
+            document.getElementById('editNombre').value = anuncio.nombre;
+            document.getElementById('editCategoria').value = anuncio.categoria;
+            document.getElementById('editDescripcion').value = anuncio.descripcion;
+            document.getElementById('editEmail').value = anuncio.email;
+            document.getElementById('editTelefono').value = anuncio.telefono || '';
+
+            // Mostrar modal
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // Función para eliminar anuncio
+        async function eliminarAnuncio(id) {
+            const anuncio = window.anuncios.find(a => a.id === id);
+            if (!anuncio) {
+                alert('Anuncio no encontrado.');
+                return;
+            }
+
+            if (!puedeEditarAnuncio(anuncio)) {
+                alert('No tienes permisos para eliminar este anuncio.');
+                return;
+            }
+
+            if (!confirm('¿Estás seguro de que quieres eliminar este anuncio permanentemente?')) {
+                return;
+            }
+
+            try {
+                await window.db.collection('clasificados').doc(id).delete();
+                alert('✅ Anuncio eliminado correctamente.');
+                
+                // Recargar anuncios
+                window.anuncios = await window.cargarClasificados();
+                actualizarAnunciosRecientes();
+                
+            } catch (error) {
+                console.error('❌ Error eliminando anuncio:', error);
+                alert('Error al eliminar el anuncio.');
+            }
+        }
+
+        // Función para cerrar modal
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         // Función para desplazarse a una sección
@@ -900,9 +1466,14 @@
             }
         }
 
-        // Manejo del formulario
+        // Manejo del formulario principal
         document.getElementById('clasificadoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            if (!window.currentUser) {
+                alert('Debes iniciar sesión para publicar anuncios.');
+                return;
+            }
             
             const formData = new FormData(e.target);
             const clasificado = {
@@ -922,10 +1493,9 @@
                 
                 mensajeDiv.innerHTML = '<div class="success-message">✅ ¡Anuncio publicado exitosamente!</div>';
                 
-                // Limpiar formulario
                 e.target.reset();
+                document.getElementById('email').value = window.currentUser.email;
                 
-                // Recargar anuncios
                 setTimeout(async () => {
                     window.anuncios = await window.cargarClasificados();
                     actualizarAnunciosRecientes();
@@ -937,6 +1507,46 @@
                 mensajeDiv.innerHTML = '<div class="error-message">❌ Error al publicar el anuncio. Inténtalo de nuevo.</div>';
             }
         });
+
+        // Manejo del formulario de edición
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const id = formData.get('id') || document.getElementById('editId').value;
+            const datosActualizados = {
+                nombre: formData.get('nombre'),
+                categoria: formData.get('categoria'),
+                descripcion: formData.get('descripcion'),
+                email: formData.get('email'),
+                telefono: formData.get('telefono') || ''
+            };
+
+            try {
+                await window.db.collection('clasificados').doc(id).update(datosActualizados);
+                
+                alert('✅ Anuncio actualizado correctamente.');
+                cerrarModal('editModal');
+                
+                // Recargar anuncios
+                window.anuncios = await window.cargarClasificados();
+                actualizarAnunciosRecientes();
+                
+            } catch (error) {
+                console.error('❌ Error actualizando anuncio:', error);
+                alert('Error al actualizar el anuncio.');
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        };
 
         // Cargar anuncios al inicio
         document.addEventListener('DOMContentLoaded', async function() {
@@ -953,7 +1563,6 @@
             } catch (error) {
                 console.error("❌ Error cargando anuncios:", error);
                 
-                // Mostrar mensaje de error en el container
                 const container = document.getElementById('anunciosContainer');
                 if (container) {
                     container.innerHTML = '<div class="no-ads">❌ Error cargando anuncios. Revisa tu conexión Firebase.</div>';
