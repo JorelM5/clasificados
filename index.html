@@ -675,6 +675,7 @@
         }
 
         // Función para obtener estado del anuncio
+        // Función para determinar el estado del anuncio
         function obtenerEstadoAnuncio(fechaExpiracion) {
             const diasRestantes = calcularDiasRestantes(fechaExpiracion);
             
@@ -741,21 +742,33 @@
 
             const anunciosActivos = window.anuncios.filter(anuncio => anuncio && anuncio.activo)
                                                   .sort((a, b) => {
-                                                      // Ordenar por fecha de creación (más recientes primero)
                                                       const fechaA = a.fechaCreacion instanceof Date ? a.fechaCreacion : new Date(a.fechaCreacion);
                                                       const fechaB = b.fechaCreacion instanceof Date ? b.fechaCreacion : new Date(b.fechaCreacion);
                                                       return fechaB - fechaA;
-                                                  })
-                                                  .slice(0, 12);
+                                                  });
 
-            console.log("📊 Mostrando", anunciosActivos.length, "anuncios activos");
+            const totalAnuncios = anunciosActivos.length;
+            const totalPaginas = Math.ceil(totalAnuncios / anunciosPorPagina);
+            
+            // Ajustar página actual si es necesario
+            if (paginaActual > totalPaginas && totalPaginas > 0) {
+                paginaActual = totalPaginas;
+            }
 
-            if (anunciosActivos.length === 0) {
+            // Calcular índices para paginación
+            const inicio = (paginaActual - 1) * anunciosPorPagina;
+            const fin = inicio + anunciosPorPagina;
+            const anunciosPagina = anunciosActivos.slice(inicio, fin);
+
+            console.log("📊 Mostrando", anunciosPagina.length, "de", totalAnuncios, "anuncios (página", paginaActual, "de", totalPaginas, ")");
+
+            if (anunciosPagina.length === 0) {
                 container.innerHTML = '<div class="no-ads">No hay anuncios disponibles en este momento.</div>';
+                actualizarControlesPaginacion(0, 0);
                 return;
             }
 
-            container.innerHTML = anunciosActivos.map(anuncio => {
+            container.innerHTML = anunciosPagina.map(anuncio => {
                 // Manejar fechas de forma segura
                 let fechaExpiracion;
                 try {
@@ -781,7 +794,7 @@
                         <div class="ad-header">
                             <div>
                                 <div class="ad-title">${anuncio.nombre || 'Sin nombre'}</div>
-                                <span class="ad-category">${anuncio.categoria || 'general'}</span>
+                                <span class="ad-category ${obtenerColorCategoria(anuncio.categoria)}">${anuncio.categoria || 'general'}</span>
                             </div>
                             <span class="status-badge ${estado.clase}">${estado.texto}</span>
                         </div>
@@ -798,9 +811,21 @@
                 `;
             }).join('');
 
-            // Actualizar contadores
+            // Actualizar contadores y controles de paginación
             actualizarContadores();
+            actualizarControlesPaginacion(paginaActual, totalPaginas);
             console.log("✅ Vista actualizada correctamente");
+        }
+
+        // Función para actualizar controles de paginación
+        function actualizarControlesPaginacion(pagina, totalPaginas) {
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            if (prevBtn) prevBtn.disabled = pagina <= 1;
+            if (nextBtn) nextBtn.disabled = pagina >= totalPaginas;
+            if (pageInfo) pageInfo.textContent = totalPaginas > 0 ? `Página ${pagina} de ${totalPaginas}` : 'Sin páginas';
         }
 
         // Función para editar anuncio
