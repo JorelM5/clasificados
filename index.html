@@ -616,52 +616,150 @@
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .ad-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .ad-footer {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+    .container {
+        padding: 15px;
+    }
+    
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .nav-container {
+        padding: 0 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .auth-buttons {
+        justify-content: center;
+        width: 100%;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 14px 20px;
+        font-size: 16px;
+        min-height: 48px;
+        margin-bottom: 8px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .ad-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .ad-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .anuncio-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .anuncio-actions .btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .pagination-controls {
+        align-self: stretch;
+        justify-content: center;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 2% auto;
+        padding: 20px;
+    }
+    /* ESTILOS PARA TELÉFONOS */
+.telefono-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 12px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
 
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+.telefono-link:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.05);
+}
+/* ESTILOS PARA BANNERS */
+.banner-space {
+    background: linear-gradient(145deg, #f8f9ff, #e8eaff);
+    border: 2px dashed #667eea;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
 
-            .pagination-controls {
-                align-self: stretch;
-                justify-content: center;
-            }
+.banner-placeholder {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    border: 1px solid #ddd;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
 
-            .header-actions {
-                width: 100%;
-                justify-content: center;
-            }
+.banner-placeholder:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.02);
+}
 
-            .modal-content {
-                width: 95%;
-                margin: 2% auto;
-                padding: 20px;
-            }
-        }
+.banner-placeholder p {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.banner-placeholder small {
+    font-style: italic;
+    color: #999;
+    margin-top: 10px;
+}
+
+/* Responsive para banners */
+@media (max-width: 768px) {
+    .banner-placeholder {
+        min-height: 150px;
+        padding: 15px;
+    }
+}
     </style>
 </head>
 <body>
@@ -870,7 +968,33 @@
                         📧 admin@dchaleco.com<br>
                         📞 Teléfono: (916) 455-8757
                     </p>
-                </div>
+                </div><!-- ESPACIOS PARA BANNERS -->
+<div class="sidebar-section banner-space">
+    <h3>📢 Publicidad</h3>
+    <div class="banner-placeholder">
+        <p>Banner 300x250px</p>
+        <p>Espacio Premium</p>
+        <small>Contacta para anunciarte</small>
+    </div>
+</div>
+
+<div class="sidebar-section banner-space">
+    <h3>🎯 Promociona</h3>
+    <div class="banner-placeholder">
+        <p>Banner 300x250px</p>
+        <p>Alta visibilidad</p>
+        <small>📧 admin@dchaleco.com</small>
+    </div>
+</div>
+
+<div class="sidebar-section banner-space">
+    <h3>💰 Destaca</h3>
+    <div class="banner-placeholder">
+        <p>Banner 300x250px</p>
+        <p>Más clientes</p>
+        <small>☎️ (916) 455-8757</small>
+    </div>
+</div>
             </div>
         </div>
 
@@ -1237,7 +1361,7 @@
                 }
 
                 const estado = obtenerEstadoAnuncio(fechaExpiracion);
-                const telefono = anuncio.telefono ? ` | Tel: ${anuncio.telefono}` : '';
+                const telefono = anuncio.telefono ? ` | Tel: <a href="tel:${anuncio.telefono}" class="telefono-link">${anuncio.telefono}</a>` : '';
                 const puedeEditar = puedeEditarAnuncio(anuncio);
                 
                 // Determinar clases y badges
